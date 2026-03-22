@@ -22,14 +22,34 @@ inline constexpr SDL_Color FONT_COLOR{
 
 #ifdef WITH_EDITOR
 namespace Config::Editor {
-inline const std::string WINDOW_TITLE{
-  "Editor"};
-inline const int WINDOW_WIDTH{730};
-inline const int WINDOW_HEIGHT{300};
-inline const SDL_Color WINDOW_BACKGROUND{
-  35, 35, 35, 255};
+
+// Level
+inline const int LEVEL_WIDTH{650};
+inline const int LEVEL_HEIGHT{150};
+inline constexpr SDL_Color LEVEL_BACKGROUND{50, 50, 50, 255};
+
+// ActorMenu
+inline const int ACTOR_MENU_WIDTH{70};
+
+// Window
+inline const std::string WINDOW_TITLE{"Editor"};
+inline const int WINDOW_WIDTH{LEVEL_WIDTH + ACTOR_MENU_WIDTH};
+inline const int WINDOW_HEIGHT{LEVEL_HEIGHT + 50};
+inline const SDL_Color WINDOW_BACKGROUND{35, 35, 35, 255};
+
+// ActorMenu
+inline const int ACTOR_MENU_POSITION_X{WINDOW_WIDTH - ACTOR_MENU_WIDTH};
+inline const SDL_Color ACTOR_MENU_BACKGROUND{15, 15, 15, 255};
+inline const int PADDING{10};
+
 }
 #endif
+
+namespace UserEvents {
+#ifdef WITH_EDITOR
+  inline Uint32 ACTOR_DRAG{SDL_RegisterEvents(1)};
+#endif
+}
 
 inline void CheckSDLError(const std::string& Msg) {
 #ifdef CHECK_ERRORS

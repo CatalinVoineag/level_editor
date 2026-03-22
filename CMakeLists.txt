@@ -5,12 +5,10 @@ project(Editor VERSION 1.0.0)
 add_executable(Editor
   "src/main.cpp"
   "src/Editor/Button.cpp"
-
-  # These files will be added later
-  # "src/Editor/Blocks.cpp"
-  # "src/Editor/Level.cpp"
-  # "src/Editor/Actor.cpp"
-  # "src/Editor/ActorTooltip.cpp"
+  "src/Editor/Blocks.cpp"
+  "src/Editor/Actor.cpp"
+  "src/Editor/ActorTooltip.cpp"
+  "src/Editor/Level.cpp"
 )
 
 target_compile_definitions(
