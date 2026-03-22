@@ -1,5 +1,6 @@
 #include "Editor/ActorTooltip.h"
 #include "Editor/Scene.h"
+#include <SDL3/SDL_mouse.h>
 
 using namespace Editor;
 
@@ -14,6 +15,9 @@ ActorTooltip::ActorTooltip(Scene& ParentScene)
     | SDL_WINDOW_ALWAYS_ON_TOP
     | SDL_WINDOW_NOT_FOCUSABLE
   );
+  DenyCursor = SDL_CreateSystemCursor(
+    SDL_SYSTEM_CURSOR_NOT_ALLOWED
+  );
   CheckSDLError("Creating Tooltip Window");
 }
 
@@ -21,6 +25,9 @@ ActorTooltip::~ActorTooltip() {
   if (!SDL_WasInit(SDL_INIT_VIDEO)) return;
   if (SDLWindow) {
     SDL_DestroyWindow(SDLWindow);
+  }
+  if (DenyCursor) {
+    SDL_DestroyCursor(DenyCursor);
   }
 }
 
@@ -45,6 +52,7 @@ void ActorTooltip::Tick(float DeltaTime) {
   )};
   if (!(Buttons & SDL_BUTTON_MASK(SDL_BUTTON_LEFT))) {
     SetIsVisible(false);
+    ParentScene.GetLevel().HandleDrop(DragActor);
   } else { PositionWindow(); }
 }
 
@@ -61,6 +69,14 @@ void ActorTooltip::PositionWindow() {
     int(x) - DragOffsetX,
     int(y) - DragOffsetY
   );
+
+  if (ParentScene.GetLevel().HasMouseFocus()) {
+    SDL_SetWindowOpacity(SDLWindow, 1.0f);
+    SDL_SetCursor(SDL_GetDefaultCursor());
+  } else {
+    SDL_SetWindowOpacity(SDLWindow, 0.5f);
+    SDL_SetCursor(DenyCursor);
+  }
 }
 
 void ActorTooltip::HandleEvent(const SDL_Event& E) {
@@ -84,5 +100,7 @@ void ActorTooltip::SetIsVisible(bool Visible) {
     SDL_ShowWindow(SDLWindow);
   } else {
     SDL_HideWindow(SDLWindow);
+    SDL_SetCursor(SDL_GetDefaultCursor());
+    SDL_SetWindowOpacity(SDLWindow, 1.0f);
   }
 }

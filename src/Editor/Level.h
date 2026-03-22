@@ -20,6 +20,7 @@ class Level {
   void Render(SDL_Surface* Surface);
   bool HasMouseFocus() const;
   void AddToLevel(ActorPtr NewActor);
+  void HandleDrop(Actor* DragActor);
 
  private:
   Scene& ParentScene;
@@ -29,5 +30,6 @@ class Level {
     Config::Editor::LEVEL_WIDTH,
     Config::Editor::LEVEL_HEIGHT
   };
+  Actor* SelectedActor{nullptr};
 };
 }

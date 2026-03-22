@@ -1,6 +1,9 @@
 #pragma once
 #include <SDL3/SDL.h>
+#include <memory>
 #include "Image.h"
+
+enum class ActorLocation { Level, Menu };
 
 namespace Editor {
 class Scene;
@@ -16,12 +19,14 @@ class Actor {
   {}
 
   bool HasMouseFocus() const;
-  virtual void HandleEvent(const SDL_Event& E);
+  virtual bool HandleEvent(const SDL_Event& E);
 
   void Tick(float DeltaTime) {}
 
   void Render(SDL_Surface* Surface) {
-    Art.Render(Surface, Rect);
+    if (GetIsVisible()) {
+      Art.Render(Surface, Rect);
+    }
   }
 
   const SDL_Rect& GetRect() const {
@@ -36,10 +41,41 @@ class Actor {
     return Art;
   }
 
+  SDL_Point GetPosition() const {
+    return {Rect.x, Rect.y};
+  }
+
+  void SetPosition(int x, int y) {
+    Rect.x = x;
+    Rect.y = y;
+  }
+
+  virtual std::unique_ptr<Actor> Clone() const {
+    return std::make_unique<Actor>(*this);
+  }
+
+  ActorLocation GetLocation() const {
+    return Location;
+  }
+
+  void SetLocation(ActorLocation NewLocation) {
+    Location = NewLocation;
+  }
+
+  bool GetIsVisible() const {
+    return isVisible;
+  }
+
+  void SetIsVisible(bool NewVisibility) {
+    isVisible = NewVisibility;
+  }
+
 protected:
   Scene& ParentScene;
   SDL_Rect Rect;
   Image& Art;
   SDL_Point DragOffset{0, 0};
+  ActorLocation Location{ActorLocation::Menu};
+  bool isVisible{true};
 };
 }
